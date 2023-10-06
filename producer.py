@@ -34,15 +34,17 @@ def produce_traffic_data():
     payloads = create_work_item_payloads(filtered_data)
     save_work_item_payloads(payloads)
 
-
-
 def load_traffic_data_as_table():
-
+    """
+    Loads traffic data JSON-file and returs it as table
+    """
     json_data = json.load_json_from_file(TRAFFIC_JSON_FILE_PATH)
     return table.create_table(json_data["value"])
 
 def filter_and_sort_traffic_data(traffic_data):
-
+    """
+    Sorts traffic_data table with given rules and and returns sorted/filtered table
+    """
     max_rate = 5.0
     both_genders = "BTSX"
 
@@ -52,9 +54,11 @@ def filter_and_sort_traffic_data(traffic_data):
 
     return traffic_data
 
-def get_latest_data_by_country(data):
-
-    data = table.group_table_by_column(data, COUNTRY_KEY)
+def get_latest_data_by_country(traffic_data):
+    """
+    Groups traffic_data table by countries and groups the first rows (=latest year) and returns the group
+    """
+    data = table.group_table_by_column(traffic_data, COUNTRY_KEY)
     latest_data_by_country = []
     for group in data:
         first_row = table.pop_table_row(group)
@@ -63,7 +67,10 @@ def get_latest_data_by_country(data):
     return latest_data_by_country
 
 def create_work_item_payloads(traffic_data):
-
+    """
+    Creates payload from traffic_data to consumer robot.
+    payloads = [{'country': 'VCT', 'year': 2011, 'rate': 3.69293}...]
+    """
     payloads = []
     for row in traffic_data:
         payload = dict(
@@ -76,7 +83,9 @@ def create_work_item_payloads(traffic_data):
     return payloads
 
 def save_work_item_payloads(payloads):
-
+    """
+    Loops payloads and saves them as work items
+    """
     for payload in payloads:
         variables = dict(traffic_data=payload)
         workitems.outputs.create(variables)

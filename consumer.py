@@ -25,10 +25,12 @@ def consume_traffic_data():
                 exception_type = "BUSINESS",
                 code = "INVALID_TRAFFIC_DATA",
                 message = item.payload,
-            )   
+            ) 
             
 def post_traffic_data_to_sales_system(traffic_data):
-
+    """
+    POSTs work items to sales-system returns response status code (200=OK etc.) and json message
+    """
     url = "https://robocorp.com/inhuman-insurance-inc/sales-system-api"
     response = requests.post(url, json=traffic_data)
     return response.status_code, response.json()
